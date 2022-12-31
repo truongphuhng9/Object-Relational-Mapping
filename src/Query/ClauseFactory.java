@@ -9,5 +9,4 @@ public interface ClauseFactory {
     public InsertClause createInsertClause(String table, String... columns);
     public ValuesClause createValuesClause(String... values);
     public UpdateClause createUpdateClause();
-    public AndClause createAndClause(String left, String right);
 }

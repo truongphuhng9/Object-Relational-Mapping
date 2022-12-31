@@ -1,10 +1,11 @@
-import DbConnection.IDbConnection;
-import DbConnection.MySqlConnection;
-import Query.Clause.*;
-import Query.Query;
-import com.sun.jdi.event.ClassUnloadEvent;
+import Query.Condition.EqualCondition;
+import Query.Query.Query;
+import Query.Query.SelectQuery;
+import Query.Value.FieldValue;
+import Query.Value.IntegerValue;
+import Query.Value.StringValue;
+import Query.Value.Value;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Main {
@@ -16,12 +17,18 @@ public class Main {
 //        if (conn != null && !conn.isClosed()) {
 //            System.out.println("Connected to MySqlDB via Bounded class");
 //        }
+
+
+
+
         String[] cols = {"ProductId", "ProductName"};
         String[] vals = {"1", "'Iphone promax'"};
-        Query q = new Query();
-        String sql2 = "SELECT * FROM [user]";
-        String sql3 = q.select().from("User");
-        String sql = q.insert("Product", "ProductID", "ProductName").values("1", "'Iphone14ProMax'").build();
+        SelectQuery q = new SelectQuery();
+        String sql =
+                q.select(new FieldValue("UserId"))
+                .from("User")
+                .where(new EqualCondition(new FieldValue("Name"), new StringValue("Truong Phu Hung")))
+                .build();
         System.out.println(sql);
     }
 }

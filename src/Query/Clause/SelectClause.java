@@ -1,5 +1,7 @@
 package Query.Clause;
 
+import Query.Value.FieldValue;
+
 import java.util.List;
 
 public class SelectClause extends Clause {
@@ -8,7 +10,7 @@ public class SelectClause extends Clause {
         this.paramsString = "*";
     }
 
-    public SelectClause(String[] params) {
+    public SelectClause(String... params) {
         this.paramsString = String.join(",", params);
     }
 
@@ -18,3 +20,6 @@ public class SelectClause extends Clause {
         return buildNext(newSql);
     }
 }
+
+// select *
+// select Col1, Col2,...

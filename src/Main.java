@@ -1,35 +1,27 @@
-import Query.Condition.EqualCondition;
-import Query.Query.SelectQuery;
-import Query.Value.FieldValue;
-import Query.Value.StringValue;
-import Repository.Respository;
-import Repository.RespositoryImpl;
-
 import java.util.Collection;
 
 import DbConnection.IDbConnection;
 import DbConnection.MySqlConnection;
+import DbConnection.PostgreSqlConnection;
+import Entity.Category;
 import Entity.Product;
 import Entity.User;
+import Query.Query.SelectQuery;
+import Query.Value.FieldValue;
+import Repository.Respository;
+import Repository.RespositoryImpl;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
 		IDbConnection db = MySqlConnection.getInstance();
 		db.connect("localhost", 3306, "design_pattern", "root", null);
-		// Connection conn = db.getConnection();
-//
-//        if (conn != null && !conn.isClosed()) {
-//            System.out.println("Connected to MySqlDB via Bounded class");
-//        }
-
-//		String[] cols = { "ProductId", "ProductName" };
-//		String[] vals = { "1", "'Iphone promax'" };
-		
-		/* User */
+		//IDbConnection db = PostgreSqlConnection.getInstance();
+		//db.connect("localhost", 5432, "orm_framework", "postgres", "password");
+		/* Users */
+		System.out.println("\n====>>>> Users");
 		SelectQuery q = new SelectQuery();
-		String sql = q.select(new FieldValue("user_id, firstname"))
-				.from("user")
-				.where(new EqualCondition(new FieldValue("age"), new StringValue("18"))).build();
+		String sql = q.select(new FieldValue("*"))
+				.from("users").build();
 		System.out.println(sql);
 
 		Respository<User, Integer> repos = new RespositoryImpl<>(User.class, Integer.class);
@@ -44,26 +36,89 @@ public class Main {
 		// Get one result
 		User user = repos.execute(sql);
 		System.out.println("One user: " + user);
-
 		
-		/* Product */
-		SelectQuery qProduct = new SelectQuery();
-		String queryStrProduct = qProduct.select(new FieldValue("product_id, amount, product_name"))
-				.from("product")
-				.where(new EqualCondition(new FieldValue("category"), new StringValue("Dien thoai"))).build();
-		System.out.println(queryStrProduct);
-		Respository<Product, Integer> reposProduct = new RespositoryImpl<>(Product.class, Integer.class);
-		reposProduct.setDbConn(db);
+		/* Products */
+		System.out.println("\n====>>>> Products");
+		SelectQuery q2 = new SelectQuery();
+		String sql2 = q2.select(new FieldValue("*"))
+				.from("products").build();
+		System.out.println(sql2);
 
-		// Get list product
-		Collection<Product> productList = reposProduct.executeList(queryStrProduct);
+		Respository<Product, Integer> repos2 = new RespositoryImpl<>(Product.class, Integer.class);
+
+		// Get list result
+		Collection<Product> productList = repos2.executeList(sql2);
 		for (Product p : productList) {
 			System.out.println(p);
 		}
 
-		// Get one result
-		Product product = reposProduct.execute(queryStrProduct);
-		System.out.println("One product: " + product);
+		
+		/* Categories */
+		System.out.println("\n====>>>> Categories");
+		SelectQuery q3 = new SelectQuery();
+		String sql3 = q3.select(new FieldValue("*"))
+				.from("categories").build();
+		System.out.println(sql3);
 
+		Respository<Category, Integer> repos3 = new RespositoryImpl<>(Category.class, Integer.class);
+
+		// Get list result
+		Collection<Category> categoryList = repos3.executeList(sql3);
+		for (Category c : categoryList) {
+			System.out.println(c);
+		}
+		
+		
+//		/* Customers */
+//		SelectQuery q = new SelectQuery();
+//		String sql = q.select(new FieldValue("*"))
+//				.from("customers").build();
+////		String sql = q.select(new FieldValue("*"))
+////				.from("customers")
+////				.where(new EqualCondition(new FieldValue("customerNumber"), new StringValue("103"))).build();
+//		System.out.println(sql);
+//
+//		Respository<Customer, Integer> repos = new RespositoryImpl<>(Customer.class, Integer.class);
+//		repos.setDbConn(db);
+//
+//		// Get list result
+//		Collection<Customer> customerList = repos.executeList(sql);
+//		for (Customer c : customerList) {
+//			System.out.println(c);
+//		}
+//
+//		// Get one result
+//		Customer customer = repos.execute(sql);
+//		System.out.println("One customer: " + customer);
+//		
+//		/* Products */
+//		SelectQuery q2 = new SelectQuery();
+//		String sql2 = q2.select(new FieldValue("*"))
+//				.from("products").build();
+//
+//		Respository<ProductNew, Integer> repos2 = new RespositoryImpl<>(ProductNew.class, Integer.class);
+//
+//		// Get list result
+//		Collection<ProductNew> productList = repos2.executeList(sql2);
+//		System.out.println("\n====>>>> Products");
+//		System.out.println(sql2);
+//		for (ProductNew p : productList) {
+//			System.out.println(p);
+//		}
+//		
+//		/* Products */
+//		SelectQuery q3 = new SelectQuery();
+//		String sql3 = q3.select(new FieldValue("*"))
+//				.from("productLines").build();
+//
+//		Respository<ProductLine, Integer> repos3 = new RespositoryImpl<>(ProductLine.class, Integer.class);
+//
+//		// Get list result
+//		Collection<ProductLine> productLineList = repos3.executeList(sql3);
+//		System.out.println("\n====>>>> ProductLines");
+//		System.out.println(sql3);
+//		for (ProductLine pl : productLineList) {
+//			System.out.println(pl);
+//		}
 	}
 }

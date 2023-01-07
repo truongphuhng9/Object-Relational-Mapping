@@ -18,15 +18,17 @@ import DbConnection.IDbConnection;
 public class RespositoryImpl<T, ID> implements Respository<T, ID> {
 	private Class<T> typeParameterClass;
 	private Class<ID> idParameterClass;
-	private IDbConnection dbConn = null;
+	private static IDbConnection dbConn = null;
 	public RespositoryImpl(Class<T> typeParameterClass, Class<ID> idParameterClass) {
 		this.typeParameterClass = typeParameterClass;
 		this.idParameterClass = idParameterClass;
 	}
 	
+	@Override
 	public void setDbConn(IDbConnection dbConn) {
-		this.dbConn = dbConn;
+		RespositoryImpl.dbConn = dbConn;
 	}
+	
 	@Override
 	public Collection<T> findAll() throws Exception {
 		//DatabaseConnection dbConn = DatabaseConnection.getConnection();

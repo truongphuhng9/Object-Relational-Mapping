@@ -19,7 +19,7 @@ public class Main {
 		/* Users */
 		System.out.println("\n====>>>> Users");
 		SelectQuery q = new SelectQuery();
-		String sql = q.select(new FieldValue("*"))
+		String sql = q.select()
 				.from("users").build();
 		System.out.println(sql);
 
@@ -27,7 +27,7 @@ public class Main {
 		repos.setDbConn(db);
 
 		// Get list result
-		Collection<User> userList = repos.executeList(sql);
+		Collection<User> userList = repos.findAll();
 		for (User u : userList) {
 			System.out.println(u);
 		}

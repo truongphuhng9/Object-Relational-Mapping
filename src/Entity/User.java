@@ -2,7 +2,9 @@ package Entity;
 
 import MyORM.Annotation.Column;
 import MyORM.Annotation.Id;
+import MyORM.Annotation.Table;
 
+@Table(value="users")
 public class User {
 	@Id
 	@Column(value="user_id")

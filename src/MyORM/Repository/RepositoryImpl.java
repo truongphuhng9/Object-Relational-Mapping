@@ -12,7 +12,9 @@ import java.util.Optional;
 
 import MyORM.Annotation.Column;
 import MyORM.Annotation.Id;
+import MyORM.Annotation.Table;
 import MyORM.Dialect.DbConnection.IDbConnection;
+import MyORM.Query.Query;
 import MyORM.Query.SelectQuery;
 
 
@@ -36,7 +38,8 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		Connection conn = dbConn.getConnection();
 		Field[] fields = typeParameterClass.getDeclaredFields();
 		SelectQuery create = new SelectQuery();
-		String query = create.select().from(typeParameterClass.getSimpleName()).build();
+		Table tableAnnotation = typeParameterClass.getAnnotation(Table.class);
+		String query = create.select().from(tableAnnotation.value()).build();
 		// String query = "select * from public." + typeParameterClass.getSimpleName() + " where age > 20";
 		//String query = dbConn.findAllQueryString(typeParameterClass.getSimpleName());
 		//Statement statement = dbConn.createStatement();
@@ -66,6 +69,7 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 	public Optional<T> findById(ID id) throws Exception {
 		Connection conn = dbConn.getConnection();
 		Field[] fields = typeParameterClass.getDeclaredFields();
+		Table tableAnnotation = typeParameterClass.getAnnotation(Table.class);
 		List<String> columnNames = new ArrayList<>();
 
 		String primaryKeyColumn = null;

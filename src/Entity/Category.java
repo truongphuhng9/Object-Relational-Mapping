@@ -1,7 +1,7 @@
 package Entity;
 
-import Annotation.Column;
-import Annotation.Id;
+import MyORM.Annotation.Column;
+import MyORM.Annotation.Id;
 
 public class Category {
 	

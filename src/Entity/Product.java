@@ -1,7 +1,7 @@
 package Entity;
 
-import Annotation.Id;
-import Annotation.Column;
+import MyORM.Annotation.Id;
+import MyORM.Annotation.Column;
 
 public class Product {
 	@Id

@@ -13,6 +13,8 @@ import java.util.Optional;
 import Annotation.Column;
 import Annotation.Id;
 import DbConnection.IDbConnection;
+import Query.Query.Query;
+import Query.Query.SelectQuery;
 
 
 public class RespositoryImpl<T, ID> implements Respository<T, ID> {
@@ -34,7 +36,9 @@ public class RespositoryImpl<T, ID> implements Respository<T, ID> {
 		//DatabaseConnection dbConn = DatabaseConnection.getConnection();
 		Connection conn = dbConn.getConnection();
 		Field[] fields = typeParameterClass.getDeclaredFields();
-		String query = "select * from public." + typeParameterClass.getSimpleName() + " where age > 20";
+		SelectQuery create = new SelectQuery();
+		String query = create.select().from(typeParameterClass.getSimpleName()).build();
+		// String query = "select * from public." + typeParameterClass.getSimpleName() + " where age > 20";
 		//String query = dbConn.findAllQueryString(typeParameterClass.getSimpleName());
 		//Statement statement = dbConn.createStatement();
 		Statement statement = conn.createStatement();

@@ -1,20 +1,19 @@
 import java.util.Collection;
 
-import DbConnection.IDbConnection;
-import DbConnection.MySqlConnection;
-import DbConnection.PostgreSqlConnection;
+import MyORM.Dialect.DbConnection.IDbConnection;
+import MyORM.Dialect.DbConnection.MySqlConnection;
 import Entity.Category;
 import Entity.Product;
 import Entity.User;
-import Query.Query.SelectQuery;
-import Query.Value.FieldValue;
-import Repository.Respository;
-import Repository.RespositoryImpl;
+import MyORM.Query.SelectQuery;
+import MyORM.Dialect.Value.FieldValue;
+import MyORM.Repository.Repository;
+import MyORM.Repository.RepositoryImpl;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
 		IDbConnection db = MySqlConnection.getInstance();
-		db.connect("localhost", 3306, "design_pattern", "root", null);
+		db.connect("localhost", 3306, "design_pattern", "root", "root");
 		//IDbConnection db = PostgreSqlConnection.getInstance();
 		//db.connect("localhost", 5432, "orm_framework", "postgres", "password");
 		/* Users */
@@ -24,7 +23,7 @@ public class Main {
 				.from("users").build();
 		System.out.println(sql);
 
-		Respository<User, Integer> repos = new RespositoryImpl<>(User.class, Integer.class);
+		Repository<User, Integer> repos = new RepositoryImpl<>(User.class, Integer.class);
 		repos.setDbConn(db);
 
 		// Get list result
@@ -44,7 +43,7 @@ public class Main {
 				.from("products").build();
 		System.out.println(sql2);
 
-		Respository<Product, Integer> repos2 = new RespositoryImpl<>(Product.class, Integer.class);
+		Repository<Product, Integer> repos2 = new RepositoryImpl<>(Product.class, Integer.class);
 
 		// Get list result
 		Collection<Product> productList = repos2.executeList(sql2);
@@ -60,7 +59,7 @@ public class Main {
 				.from("categories").build();
 		System.out.println(sql3);
 
-		Respository<Category, Integer> repos3 = new RespositoryImpl<>(Category.class, Integer.class);
+		Repository<Category, Integer> repos3 = new RepositoryImpl<>(Category.class, Integer.class);
 
 		// Get list result
 		Collection<Category> categoryList = repos3.executeList(sql3);

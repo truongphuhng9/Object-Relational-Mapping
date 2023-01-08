@@ -1,4 +1,5 @@
 import java.util.Collection;
+import java.util.Optional;
 
 import MyORM.Dialect.DbConnection.IDbConnection;
 import MyORM.Dialect.DbConnection.MySqlConnection;
@@ -26,16 +27,16 @@ public class Main {
 		Repository<User, Integer> repos = new RepositoryImpl<>(User.class, Integer.class);
 		repos.setDbConn(db);
 
-		// Get list result
-		Collection<User> userList = repos.findAll();
-		for (User u : userList) {
-			System.out.println(u);
-		}
+//		// Get list result
+//		Collection<User> userList = repos.findAll();
+//		for (User u : userList) {
+//			System.out.println(u);
+//		}
+//
+//		// Get one result
+//		User user = repos.execute(sql);
+//		System.out.println("One user: " + user);
 
-		// Get one result
-		User user = repos.execute(sql);
-		System.out.println("One user: " + user);
-		
 		/* Products */
 		System.out.println("\n====>>>> Products");
 		SelectQuery q2 = new SelectQuery();
@@ -51,7 +52,12 @@ public class Main {
 			System.out.println(p);
 		}
 
-		
+		/* User */
+		Repository<User, Integer> repos5 = new RepositoryImpl<>(User.class, Integer.class);
+		Optional<User> user5 = repos5.findById(2);
+		System.out.println("\n======>>> Find user by ID");
+		System.out.println(user5);
+
 		/* Categories */
 		System.out.println("\n====>>>> Categories");
 		SelectQuery q3 = new SelectQuery();
@@ -72,9 +78,7 @@ public class Main {
 //		SelectQuery q = new SelectQuery();
 //		String sql = q.select(new FieldValue("*"))
 //				.from("customers").build();
-////		String sql = q.select(new FieldValue("*"))
-////				.from("customers")
-////				.where(new EqualCondition(new FieldValue("customerNumber"), new StringValue("103"))).build();
+
 //		System.out.println(sql);
 //
 //		Respository<Customer, Integer> repos = new RespositoryImpl<>(Customer.class, Integer.class);

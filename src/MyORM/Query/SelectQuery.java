@@ -3,6 +3,7 @@ package MyORM.Query;
 import MyORM.Dialect.Clause.FromClause;
 import MyORM.Dialect.Clause.SelectClause;
 import MyORM.Dialect.Clause.WhereClause;
+import MyORM.Dialect.Condition.AndCondition;
 import MyORM.Dialect.Condition.Condition;
 import MyORM.Dialect.Value.FieldValue;
 
@@ -49,6 +50,8 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery where(String condition) {
+        WhereClause where = new WhereClause(condition);
+        addClause(where);
         return this;
     }
 

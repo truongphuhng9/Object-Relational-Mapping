@@ -48,6 +48,8 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery where(String condition) {
+        WhereClause where = new WhereClause(condition);
+        addClause(where);
         return this;
     }
 

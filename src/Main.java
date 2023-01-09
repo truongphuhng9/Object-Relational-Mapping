@@ -1,4 +1,5 @@
 import java.util.Collection;
+import java.util.Optional;
 
 import MyORM.Dialect.Condition.EqualCondition;
 import MyORM.Dialect.DbConnection.IDbConnection;
@@ -107,12 +108,13 @@ public class Main {
 		queryProductsAggregate(reposProduct);
 
 	}
+
 	public static void main(String[] args) throws Exception {
-		testPostgreSql();
-//		IDbConnection db = MySqlConnection.getInstance();
-//		db.connect("localhost", 3306, "design_pattern", "root", "root");
-		IDbConnection db = PostgreSqlConnection.getInstance();
-		db.connect("localhost", 5432, "design_pattern", "postgres", "nvmt123456");
+		//testPostgreSql();
+		IDbConnection db = MySqlConnection.getInstance();
+		db.connect("localhost", 3306, "design_pattern", "root", "root");
+		//IDbConnection db = PostgreSqlConnection.getInstance();
+		//db.connect("localhost", 5432, "design_pattern", "postgres", "nvmt123456");
 		/* Users */
 		System.out.println("\n====>>>> Users");
 		SelectQuery q = new SelectQuery();
@@ -133,36 +135,42 @@ public class Main {
 		User user = repos.execute(sql);
 		System.out.println("One user: " + user);
 
-		/* Products */
-		System.out.println("\n====>>>> Products");
-		SelectQuery q2 = new SelectQuery();
-		String sql2 = q2.select(new FieldValue("*"))
-				.from("products").build();
-		System.out.println(sql2);
+		// 4.Select user with id = 2
+		SelectQuery q4 = new SelectQuery();
+		Optional<User> user4 = repos.findById(2);
+		System.out.println("===========>>User with id 2:");
+		System.out.println(user4.get());
 
-		Repository<Product, Integer> repos2 = new RepositoryImpl<>(Product.class, Integer.class);
+//		/* Products */
+//		System.out.println("\n====>>>> Products");
+//		SelectQuery q2 = new SelectQuery();
+//		String sql2 = q2.select()
+//				.from("products").build();
+//		System.out.println(sql2);
+//
+//		Repository<Product, Integer> repos2 = new RepositoryImpl<>(Product.class, Integer.class);
+//
+//		// Get list result
+//		Collection<Product> productList = repos2.executeList(sql2);
+//		for (Product p : productList) {
+//			System.out.println(p);
+//		}
 
-		// Get list result
-		Collection<Product> productList = repos2.executeList(sql2);
-		for (Product p : productList) {
-			System.out.println(p);
-		}
 
-
-		/* Categories */
-		System.out.println("\n====>>>> Categories");
-		SelectQuery q3 = new SelectQuery();
-		String sql3 = q3.select(new FieldValue("*"))
-				.from("categories").build();
-		System.out.println(sql3);
-
-		Repository<Category, Integer> repos3 = new RepositoryImpl<>(Category.class, Integer.class);
-
-		// Get list result
-		Collection<Category> categoryList = repos3.executeList(sql3);
-		for (Category c : categoryList) {
-			System.out.println(c);
-		}
+//		/* Categories */
+//		System.out.println("\n====>>>> Categories");
+//		SelectQuery q3 = new SelectQuery();
+//		String sql3 = q3.select()
+//				.from("categories").build();
+//		System.out.println(sql3);
+//
+//		Repository<Category, Integer> repos3 = new RepositoryImpl<>(Category.class, Integer.class);
+//
+//		// Get list result
+//		Collection<Category> categoryList = repos3.executeList(sql3);
+//		for (Category c : categoryList) {
+//			System.out.println(c);
+//		}
 
 
 //		/* Customers */

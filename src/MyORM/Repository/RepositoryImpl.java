@@ -1,19 +1,14 @@
 package MyORM.Repository;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.sql.*;
+import java.util.*;
 
 import MyORM.Annotation.Column;
 import MyORM.Annotation.Id;
 import MyORM.Annotation.Table;
 import MyORM.Dialect.DbConnection.IDbConnection;
+import MyORM.Query.DeleteQuery;
 import MyORM.Query.Query;
 import MyORM.Query.SelectQuery;
 
@@ -37,14 +32,19 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		for (Field field : fields) {
 			field.setAccessible(true);
 
-			Column columnAnnotation = field.getAnnotation(Column.class);
-			String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
-					? field.getName()
-					: columnAnnotation.value();
+			String columnName = getColumnName(field);
 
 			setFields(field, result, t, columnName);
 		}
 		return t;
+	}
+
+	private String getColumnName(Field field) {
+		Column columnAnnotation = field.getAnnotation(Column.class);
+		String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
+				? field.getName()
+				: columnAnnotation.value();
+		return columnName;
 	}
 
 	@Override
@@ -81,15 +81,10 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		for (Field field : fields) {
 			field.setAccessible(true);
 			if (field.isAnnotationPresent(Id.class)) {
-				Column columnAnnotation = field.getAnnotation(Column.class);
-				primaryKeyColumn = columnAnnotation == null || columnAnnotation.value() == null
-						|| columnAnnotation.value().length() == 0 ? field.getName() : columnAnnotation.value();
+				primaryKeyColumn = getColumnName(field);
 				columnNames.add(primaryKeyColumn);
 			} else if (field.isAnnotationPresent(Column.class)) {
-				Column columnAnnotation = field.getAnnotation(Column.class);
-				String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
-						? field.getName()
-						: columnAnnotation.value();
+				String columnName = getColumnName(field);
 				columnNames.add(columnName);
 			}
 		}
@@ -120,11 +115,98 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 
 		return result;
 	}
-
 	@Override
-	public Optional<T> findBy(String... columns) {
-		return Optional.empty();
+	public void deleteById(ID id) throws Exception {
+		Field[] fields = typeParameterClass.getDeclaredFields();
+		Connection conn = dbConn.getConnection();
+		Table tableAnnotation = typeParameterClass.getAnnotation(Table.class);
+
+		String primaryKeyColumn = null;
+		for(Field field : fields){
+			field.setAccessible(true);
+			if(field.isAnnotationPresent(Id.class)){
+				Column columnAnnotation = field.getAnnotation(Column.class);
+				primaryKeyColumn = columnAnnotation == null ||
+						columnAnnotation.value() == null ||
+						columnAnnotation.value().length() == 0 ?
+						field.getName() : columnAnnotation.value();
+				break;
+			}
+		}
+
+		if(primaryKeyColumn == null || primaryKeyColumn.length() == 0){
+			throw new IllegalStateException("Primary key in java class is not defined");
+		}
+
+		DeleteQuery delete = new DeleteQuery();
+		String sql = delete.delete_from(tableAnnotation.value()).where(String.join(" ",primaryKeyColumn, "= ?")).build();
+
+		PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+
+		setPreparedStatement(idParameterClass, preparedStatement, 1, id);
+
+		int rowsDeleted = preparedStatement.executeUpdate();
+		System.out.println("Number of rows deleted are " + rowsDeleted);
 	}
+
+//	@Override
+//	public T save(T t) {
+//
+//		Field[] fields = typeParameterClass.getDeclaredFields();
+//
+//		List<Field> columns = new ArrayList<>();
+//		StringJoiner columnsString = new StringJoiner(",");
+//
+//		for(Field field : fields){
+//			field.setAccessible(true);
+//			if(field.isAnnotationPresent(Id.class)){
+//				String primaryKeyColumn = getColumnName(field);
+//				columnsString.add(primaryKeyColumn);
+//				columns.add(field);
+//			} else if (field.isAnnotationPresent(Column.class)) {
+//				String columnName = getColumnName(field);
+//				columnsString.add(columnName);
+//				columns.add(field);
+//			}
+//		}
+//
+//		StringJoiner preparedStatementValueJoiner = new StringJoiner(",");
+//		for(int i = 0; i < columns.size(); i++){
+//			preparedStatementValueJoiner.add("? ");
+//		}
+//
+//		int preparedStatementIndex = 1;
+//
+//
+//		String query = "insert into " + typeParameterClass.getSimpleName() + "(" + columnsString + " ) VALUES (" + preparedStatementValueJoiner + ")";
+//		PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+//
+//
+//
+//		for (Field field : columns) {
+//			if (int.class.equals(field.getType()) || Integer.class.equals(field.getType())) {
+//				preparedStatement.setInt(preparedStatementIndex++, (Integer) field.get(t));
+//			} else if (long.class.equals(field.getType()) || Long.class.equals(field.getType())) {
+//				preparedStatement.setLong(preparedStatementIndex++, (Long) field.get(t));
+//			} else if (String.class.equals(field.getType())) {
+//				preparedStatement.setString(preparedStatementIndex++, (String) field.get(t));
+//			} else if (boolean.class.equals(field.getType()) || Boolean.class.equals(field.getType())) {
+//				preparedStatement.setBoolean(preparedStatementIndex++, (Boolean) field.get(t));
+//			} else if (double.class.equals(field.getType()) || Double.class.equals(field.getType())) {
+//				preparedStatement.setDouble(preparedStatementIndex++, (Double) field.get(t));
+//			} else if (float.class.equals(field.getType()) || Float.class.equals(field.getType())) {
+//				preparedStatement.setFloat(preparedStatementIndex++, (Float) field.get(t));
+//			} else {
+//				throw new IllegalStateException("Unexpected value: " + field.getType());
+//			}
+//		}
+//
+//		int noOfRowsUpdated = preparedStatement.executeUpdate();
+//		System.out.println("Number of records inserted: " + noOfRowsUpdated);
+//		return t;
+//	}
+
 
 	private void setPreparedStatement(Class<?> clss, PreparedStatement preparedStatement, int index, ID id)
 			throws Exception {

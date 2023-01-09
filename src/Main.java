@@ -139,7 +139,31 @@ public class Main {
 		SelectQuery q4 = new SelectQuery();
 		Optional<User> user4 = repos.findById(2);
 		System.out.println("===========>>User with id 2:");
-		System.out.println(user4.get());
+		System.out.println(user4.orElse(null));
+
+		// 5. Delete user with id = 2
+		Optional<User> user5 = repos.findById(2);
+		for (User u : userList) {
+			System.out.println(u);
+		}
+		System.out.println("\n=======>>> After delete id 2");
+		repos.deleteById(2);
+		Collection<User> listAfterDelete = repos.findAll();
+		for (User u : listAfterDelete) {
+			System.out.println(u);
+		}
+
+		// 6. Insert user with id 2 again
+		User user6 = new User();
+		user6.setUserId(2);
+		user6.setAge(25);
+		user6.setFirstName("Truong");
+		user6.setLastName("Phu Hung");
+		user6.setAddress("TP HCM");
+		user6.setPhone("0938439814");
+		User savedUser6 = repos.save(user6);
+		System.out.println("\n===========>>> Saved User Info");
+		System.out.println(user6);
 
 //		/* Products */
 //		System.out.println("\n====>>>> Products");

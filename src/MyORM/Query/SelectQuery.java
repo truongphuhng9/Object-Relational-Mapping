@@ -1,10 +1,9 @@
 package MyORM.Query;
 
-import MyORM.Dialect.Clause.FromClause;
-import MyORM.Dialect.Clause.SelectClause;
-import MyORM.Dialect.Clause.WhereClause;
+import MyORM.Dialect.Clause.*;
 import MyORM.Dialect.Condition.Condition;
 import MyORM.Dialect.Value.FieldValue;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,14 +58,20 @@ public class SelectQuery extends Query {
     }
 
     public SelectQuery group_by(String... columns) {
+        GroupByClause groupByClause=new GroupByClause(columns);
+        addClause(groupByClause);
         return this;
     }
 
-    public SelectQuery having(String condition) {
+    public SelectQuery having(Condition condition) {
+        HavingClause havingClause=new HavingClause(condition);
+        addClause(havingClause);
         return this;
     }
 
     public SelectQuery order_by(String... columns) {
+        OrderByClause orderByClause=new OrderByClause(columns);
+        addClause(orderByClause);
         return this;
     }
 }

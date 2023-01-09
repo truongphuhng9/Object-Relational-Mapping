@@ -26,12 +26,12 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		this.typeParameterClass = typeParameterClass;
 		this.idParameterClass = idParameterClass;
 	}
-	
+
 	@Override
 	public void setDbConn(IDbConnection dbConn) {
 		RepositoryImpl.dbConn = dbConn;
 	}
-	
+
 	@Override
 	public Collection<T> findAll() throws Exception {
 		//DatabaseConnection dbConn = DatabaseConnection.getConnection();
@@ -196,7 +196,7 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		}
 		return result.get(0);
 	}
-	
+
 	private void setFields(Field field, ResultSet resultSet, T t, String columnName) throws Exception {
 		if (int.class.equals(field.getType()) || Integer.class.equals(field.getType())) {
 			try {
@@ -227,7 +227,7 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 				field.set(t, resultSet.getFloat(columnName));
 			} catch (Exception e) {
 			}
-			
+
 		} else {
 			throw new IllegalStateException("Unexpected value: " + field.getType());
 		}

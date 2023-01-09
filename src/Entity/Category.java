@@ -4,7 +4,7 @@ import MyORM.Annotation.Column;
 import MyORM.Annotation.Id;
 
 public class Category {
-	
+
 	@Id
 	@Column(value = "category_id")
 	private int categoryId;
@@ -26,5 +26,5 @@ public class Category {
 	public String toString() {
 		return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
 	}
-	
+
 }

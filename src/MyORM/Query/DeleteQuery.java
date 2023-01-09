@@ -29,4 +29,10 @@ public class DeleteQuery extends Query {
         addClause(whereClause);
         return this;
     }
+
+    public DeleteQuery where(String condition) {
+        WhereClause whereClause = new WhereClause(condition);
+        addClause(whereClause);
+        return this;
+    }
 }

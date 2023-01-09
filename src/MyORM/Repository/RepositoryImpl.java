@@ -14,6 +14,7 @@ import MyORM.Annotation.Column;
 import MyORM.Annotation.Id;
 import MyORM.Annotation.Table;
 import MyORM.Dialect.DbConnection.IDbConnection;
+import MyORM.Query.DeleteQuery;
 import MyORM.Query.Query;
 import MyORM.Query.SelectQuery;
 
@@ -127,7 +128,7 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 	@Override
 	public void deleteById(ID id) throws Exception{
 		Field[] fields = typeParameterClass.getDeclaredFields();
-
+		Connection conn = dbConn.getConnection();
 		String primaryKeyColumn = null;
 		for(Field field : fields){
 			field.setAccessible(true);
@@ -141,9 +142,10 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 			throw new IllegalStateException("Primary key in java class is not defined");
 		}
 
-		String query = "delete from " + typeParameterClass.getSimpleName() + " where " + primaryKeyColumn + " = ?";
-		PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-
+		Table tableAnnotation = typeParameterClass.getAnnotation(Table.class);
+		DeleteQuery create = new DeleteQuery();
+		String sql = create.delete().from(tableAnnotation.value()).where(String.join(" ",primaryKeyColumn, "= ?")).build();
+		PreparedStatement preparedStatement = conn.prepareStatement(sql);
 
 		setPreparedStatement(idParameterClass, preparedStatement, 1, id);
 

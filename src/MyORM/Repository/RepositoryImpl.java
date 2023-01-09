@@ -1,5 +1,11 @@
 package MyORM.Repository;
 
+import MyORM.Annotation.Column;
+import MyORM.Annotation.Id;
+import MyORM.Annotation.Table;
+import MyORM.Dialect.DbConnection.IDbConnection;
+import MyORM.Query.SelectQuery;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,13 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
-import MyORM.Annotation.Column;
-import MyORM.Annotation.Id;
-import MyORM.Annotation.Table;
-import MyORM.Dialect.DbConnection.IDbConnection;
-import MyORM.Query.Query;
-import MyORM.Query.SelectQuery;
 
 
 public class RepositoryImpl<T, ID> implements Repository<T, ID> {

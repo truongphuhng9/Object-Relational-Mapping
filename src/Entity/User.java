@@ -60,6 +60,6 @@ public class User {
 		return "User [userId=" + userId + ", age=" + age + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", address=" + address + ", phone=" + phone + "]";
 	}
-	
-	
+
+
 }

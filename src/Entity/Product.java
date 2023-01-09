@@ -15,7 +15,7 @@ public class Product {
 	private double price;
 	@Column(value = "category_id")
 	private String categoryId;
-	
+
 	public int getProductId() {
 		return productId;
 	}
@@ -51,6 +51,6 @@ public class Product {
 		return "Product [productId=" + productId + ", amount=" + amount + ", productName=" + productName + ", price="
 				+ price + ", categoryId=" + categoryId + "]";
 	}
-	
-	
+
+
 }

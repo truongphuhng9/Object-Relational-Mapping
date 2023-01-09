@@ -36,15 +36,18 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		Field[] fields = typeParameterClass.getDeclaredFields();
 		for (Field field : fields) {
 			field.setAccessible(true);
-
-			Column columnAnnotation = field.getAnnotation(Column.class);
-			String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
-					? field.getName()
-					: columnAnnotation.value();
-
+			String columnName = getColumnName(field);
 			setFields(field, result, t, columnName);
 		}
 		return t;
+	}
+
+	private String getColumnName(Field field) {
+		Column columnAnnotation = field.getAnnotation(Column.class);
+		String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
+				? field.getName()
+				: columnAnnotation.value();
+		return columnName;
 	}
 
 	@Override
@@ -81,15 +84,10 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 		for (Field field : fields) {
 			field.setAccessible(true);
 			if (field.isAnnotationPresent(Id.class)) {
-				Column columnAnnotation = field.getAnnotation(Column.class);
-				primaryKeyColumn = columnAnnotation == null || columnAnnotation.value() == null
-						|| columnAnnotation.value().length() == 0 ? field.getName() : columnAnnotation.value();
+				primaryKeyColumn = getColumnName(field);
 				columnNames.add(primaryKeyColumn);
 			} else if (field.isAnnotationPresent(Column.class)) {
-				Column columnAnnotation = field.getAnnotation(Column.class);
-				String columnName = columnAnnotation.value() == null || columnAnnotation.value().length() == 0
-						? field.getName()
-						: columnAnnotation.value();
+				String columnName = getColumnName(field);
 				columnNames.add(columnName);
 			}
 		}
@@ -124,6 +122,34 @@ public class RepositoryImpl<T, ID> implements Repository<T, ID> {
 	@Override
 	public Optional<T> findBy(String... columns) {
 		return Optional.empty();
+	}
+
+	@Override
+	public void deleteById(ID id) throws Exception{
+		Field[] fields = typeParameterClass.getDeclaredFields();
+
+		String primaryKeyColumn = null;
+		for(Field field : fields){
+			field.setAccessible(true);
+			if(field.isAnnotationPresent(Id.class)){
+				primaryKeyColumn = getColumnName(field);
+				break;
+			}
+		}
+
+		if(primaryKeyColumn == null || primaryKeyColumn.length() == 0){
+			throw new IllegalStateException("Primary key in java class is not defined");
+		}
+
+		String query = "delete from " + typeParameterClass.getSimpleName() + " where " + primaryKeyColumn + " = ?";
+		PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+
+
+		setPreparedStatement(idParameterClass, preparedStatement, 1, id);
+
+		int rowsDeleted = preparedStatement.executeUpdate();
+		System.out.println("Number of rows deleted are " + rowsDeleted);
+
 	}
 
 	private void setPreparedStatement(Class<?> clss, PreparedStatement preparedStatement, int index, ID id)
